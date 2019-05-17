@@ -36,6 +36,7 @@ next = True
 while next:
     try:
         url = paging['next']
+# please note that next URI returned contains the access_token parameter, but not the appsecret_proof or appsecret_time parameters
         url = url+"&appsecret_proof=%s&appsecret_time=%s" % (appsecret_proof, t)
         r = requests.get(url, headers=headers)
         answer = r.json()
