@@ -24,12 +24,33 @@ getUsers = "https://www.workplace.com/scim/v1/Users/"
 r = requests.get(getUsers, headers=headers)
 answer = r.json()
 people = answer['Resources']
-#print(people)
+try:
+    itemsPerPage = answer['itemsPerPage']
+    total = answer['totalResults']
+    startIndex = answer['startIndex']
+    startIndex += itemsPerPage
+    while startIndex < total:
+        startIndex += itemsPerPage
+        getUsers = "https://www.workplace.com/scim/v1/Users?count=%s&startIndex=%s&access_token=%s&appsecret_proof=%s&appsecret_time=%s" % (itemsPerPage, startIndex, TOKEN, appsecret_proof, t)
+        r = requests.get(getUsers, headers=headers)
+        answer = r.json()
+        try:
+            people = people + answer['Resources']
+        except:
+            x = 0
+except:
+    x = 0
+
+link = {}
+for person in people:
+    try:
+        xlink[person['userName']] = person['id']
+    except:
+        x = 0
 
 for person in people:
     try:
-        users.index(person['userName'])
-        uri = "https://www.workplace.com/scim/v1/Users/%s" % person['id']
+        uri = "https://www.workplace.com/scim/v1/Users/%s" % xlink[user]
         r = requests.get(uri, headers=headers)
         state = r.json()
         if state['active'] == False:
@@ -37,6 +58,6 @@ for person in people:
             r = requests.put(uri, data=json.dumps(state), headers=headers)
             print(r.json())
         else:
-            print "User %s was already active" % person['userName']
+            print "User %s was already active" % user
     except ValueError:
         x = 0
