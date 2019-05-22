@@ -53,7 +53,7 @@ try:
 except:
     x = 0
 
-link = {}
+xlink = {}
 for person in people:
     try:
         xlink[person['userName']] = person['id']

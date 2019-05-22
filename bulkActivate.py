@@ -41,14 +41,14 @@ try:
 except:
     x = 0
 
-link = {}
+xlink = {}
 for person in people:
     try:
         xlink[person['userName']] = person['id']
     except:
         x = 0
 
-for person in people:
+for user in users:
     try:
         uri = "https://www.workplace.com/scim/v1/Users/%s" % xlink[user]
         r = requests.get(uri, headers=headers)
