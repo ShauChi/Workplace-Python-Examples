@@ -56,7 +56,10 @@ except:
 xlink = {}
 for person in people:
     try:
-        xlink[person['userName']] = person['id']
+        if person['userName'] == '':
+            xlink[person['externalId']] = person['id']
+        else:
+            xlink[person['userName']] = person['id']
     except:
         x = 0
 
