@@ -22,7 +22,7 @@ appsecret_proof = hmac.new(APPSECRET, blurb, hashlib.sha256)
 appsecret_proof = appsecret_proof.hexdigest()
 
 headers = {'Content-Type': 'application/json'}
-lim = 5000
+lim = 2
 
 getGroups = "https://graph.workplace.com/community/groups?access_token=%s&appsecret_proof=%s&appsecret_time=%s" % (TOKEN, appsecret_proof, t)
 
@@ -37,20 +37,23 @@ for group in groups:
         for blob in response['data']:
             getSeen = "https://graph.workplace.com/%s/seen?limit=%d&access_token=%s&appsecret_proof=%s&appsecret_time=%s" % (blob['id'], lim, TOKEN, appsecret_proof, t)
             r = requests.get(getSeen, headers=headers)
-            response = r.json()
-            if response['data'] != []:
-#                print(getSeen)
-                print("Post %s, %s was seen by\n%s" % (blob['id'], blob['message'], response['data']))
-                paging = response['paging']
-                next = True
+            response1 = r.json()
+            try:
+                if response1['data'] != []:
+#                   print(getSeen)
+                    print("Post %s, %s was seen by\n%s" % (blob['id'], blob['message'], response['data']))
+                    paging = response1['paging']
+                    next = True
                 while next:
                     try:
                         url = paging['next']
                         url = url+"&appsecret_proof=%s&appsecret_time=%s" % (appsecret_proof, t)
                         r = requests.get(url, headers=headers)
-                        answer = r.json()
-#                        print(url)
-                        print("Post %s, %s was seen by\n%s" % (blob['id'], blob['message'], response['data']))
+                        response2 = r.json()
+#                        print(response2)
+                        print("Post %s, %s was seen by\n%s" % (blob['id'], blob['message'], response2['data']))
                         paging = answer['paging']
                     except KeyError:
                         next = False
+            except:
+                x = 0
